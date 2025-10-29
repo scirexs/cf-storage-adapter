@@ -28,9 +28,6 @@ jobs:
       - name: Translate by dnt
         run: deno run -A ./build_npm.ts
 
-      - name: Publish to jsr
-        run: deno publish
-
       - name: Publish to npm
         run: npm publish --provenance
         working-directory: ./npm
