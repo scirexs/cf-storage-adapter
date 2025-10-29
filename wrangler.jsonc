@@ -1,0 +1,58 @@
+{
+  "$schema": "https://www.unpkg.com/wrangler@latest/config-schema.json",
+  "name": "cf-storage-adapter",
+  "main": "dist/index.js",
+  "compatibility_date": "2025-10-17",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "workers_dev": false,
+  "route": {
+    "pattern": "mydomain.example.com",
+    "custom_domain": true
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "DOKVS",
+        "class_name": "DOKVS"
+      }
+    ]
+  },
+  "kv_namespaces": [
+    {
+      "binding": "MY_KV_NAMESPACE",
+      "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "MY_D1_DATABASE",
+      "database_name": "my_database_name",
+      "database_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MY_R2_BUCKET",
+      "bucket_name": "my-bucket-name"
+    }
+  ],
+  "hyperdrive": [
+    {
+      "binding": "MY_HYPERDRIVE_CONN",
+      "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": [
+        "DOKVS"
+      ]
+    }
+  ]
+}
