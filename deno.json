@@ -1,6 +1,6 @@
 {
   "name": "@scirexs/cf-storage-adapter",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "license": "MIT",
   "exports": "./src/mod.ts",
   "publish": {
@@ -37,8 +37,5 @@
     "esbuild": "npm:esbuild@^0.25.11",
     "miniflare": "npm:miniflare@^4.20251011.1",
     "cloudflare:workers": "./tests/worker.ts"
-  },
-  "exclude": [
-    "./tests/prep.ts"
-  ]
+  }
 }
