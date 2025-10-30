@@ -266,7 +266,7 @@ class BOStore implements IBOStore {
 
   async get(key: string): Promise<ArrayBuffer | undefined> {
     const result = await this.#R2.get(key);
-    return await result?.arrayBuffer();
+    return await result?.arrayBuffer?.();
   }
   async put(key: string, data: ArrayBuffer, options?: BOPutOptions): Promise<void> {
     await this.#R2.put(key, data, options);
