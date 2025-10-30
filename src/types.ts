@@ -224,3 +224,6 @@ interface BOHttpMetadata {
   contentEncoding?: string;
   cacheControl?: string;
 }
+
+/*** Fake definition for testing ***/
+export class DurableObject<Env = unknown> {}

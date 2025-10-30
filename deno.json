@@ -36,6 +36,6 @@
     "@std/assert": "jsr:@std/assert@^1.0.15",
     "esbuild": "npm:esbuild@^0.25.11",
     "miniflare": "npm:miniflare@^4.20251011.1",
-    "cloudflare:workers": "./tests/worker.ts"
+    "cloudflare:workers": "./src/types.ts"
   }
 }

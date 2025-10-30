@@ -6,5 +6,3 @@ export default {
     return new Response(`OK ${DOKVS.now()}`);
   },
 };
-
-export class DurableObject<Env = unknown> {}
