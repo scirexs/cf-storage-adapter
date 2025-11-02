@@ -225,10 +225,10 @@ interface BOHttpMetadata {
   cacheControl?: string;
 }
 
-/*** Fake definition for testing ***/
-export declare abstract class DurableObject<Env = unknown> {
-  __DURABLE_OBJECT_BRAND: never;
-  protected ctx: DurableObjectState;
-  protected env: Env;
-  constructor(ctx: DurableObjectState, env: Env);
+/** Fake definition */
+export abstract class DurableObject<Env = unknown> {
+  __DURABLE_OBJECT_BRAND!: never;
+  protected ctx!: DurableObjectState;
+  protected env!: Env;
+  constructor(ctx: DurableObjectState, env: Env) {}
 }
