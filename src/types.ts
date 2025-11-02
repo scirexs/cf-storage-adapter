@@ -226,4 +226,9 @@ interface BOHttpMetadata {
 }
 
 /*** Fake definition for testing ***/
-export class DurableObject<Env = unknown> {}
+export declare abstract class DurableObject<Env = unknown> {
+  __DURABLE_OBJECT_BRAND: never;
+  protected ctx: DurableObjectState;
+  protected env: Env;
+  constructor(ctx: DurableObjectState, env: Env);
+}
