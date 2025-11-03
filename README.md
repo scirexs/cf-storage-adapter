@@ -1,6 +1,6 @@
 # Cloudflare Storage Wrapper
 
-A unified TypeScript wrapper package for Cloudflare's storage services, providing consistent interfaces for KV, Durable Objects, D1, Hyperdrive, and R2.
+A unified TypeScript wrapper package for Cloudflare's storage services, providing consistent interfaces for Durable Objects, KV, D1, R2, and Hyperdrive.
 
 ## Features
 
@@ -11,11 +11,7 @@ A unified TypeScript wrapper package for Cloudflare's storage services, providin
 
 ## Installation
 ```bash
-# npm
 npm install @scirexs/cf-storage-adapter
-
-# JSR (Deno)
-deno add jsr:@scirexs/cf-storage-adapter
 ```
 
 ## Configuration
@@ -25,7 +21,7 @@ deno add jsr:@scirexs/cf-storage-adapter
 If you use `getKVSRealtime` function, you have to export `DOKVS` extended class with worker handlers, and include the class in your `wrangler.jsonc`:
 ```js
 import { DOKVS } from "@scirexs/cf-storage-adapter";
-export class MyClass extends DOKVS {}
+export class MyClass extends DOKVS { }
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> { }
 }
@@ -35,7 +31,7 @@ export default {
   "durable_objects": {
     "bindings": [
       {
-        "name": "MY_DURABLE_OBJECT", // 
+        "name": "MY_DURABLE_OBJECT",
         "class_name": "MyClass"
       }
     ]
