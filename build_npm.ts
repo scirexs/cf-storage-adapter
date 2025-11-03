@@ -35,3 +35,10 @@ await build({
     Deno.copyFileSync("README.md", "npm/README.md");
   },
 });
+
+const CFOBJ_PATH = "./npm/esm/cfobj.js";
+const contents = await Deno.readTextFile(CFOBJ_PATH);
+await Deno.writeTextFile(CFOBJ_PATH, contents.replace(
+  `import { DurableObject } from "./types.js";`,
+  `import { DurableObject } from "cloudflare:workers";`
+));

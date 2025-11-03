@@ -22,14 +22,21 @@ deno add jsr:@scirexs/cf-storage-adapter
 
 ### For DOKVS (Durable Objects KV Store)
 
-If you use the `DOKVS` class or `getKVSRealtime` function, you **must** include the following configuration in your `wrangler.jsonc`:
+If you use `getKVSRealtime` function, you have to export `DOKVS` extended class with worker handlers, and include the class in your `wrangler.jsonc`:
+```js
+import { DOKVS } from "@scirexs/cf-storage-adapter";
+export class MyClass extends DOKVS {}
+export default {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> { }
+}
+```
 ```json
 {
   "durable_objects": {
     "bindings": [
       {
-        "name": "DOKVS",
-        "class_name": "DOKVS"
+        "name": "MY_DURABLE_OBJECT", // 
+        "class_name": "MyClass"
       }
     ]
   },
@@ -37,7 +44,7 @@ If you use the `DOKVS` class or `getKVSRealtime` function, you **must** include 
     {
       "tag": "v1",
       "new_sqlite_classes": [
-        "DOKVS"
+        "MyClass"
       ]
     }
   ]

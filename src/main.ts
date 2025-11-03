@@ -16,8 +16,6 @@ import type {
 } from "./types.ts";
 import { DOKVS } from "./cfobj.ts";
 
-const DOKVS_BINDING = "DOKVS";
-
 /**
  * Get an eventual consistency Key-Value Store instance from environment bindings
  *
@@ -38,30 +36,29 @@ const DOKVS_BINDING = "DOKVS";
 function getKVSEventual(env: Env, name: string): IKVEventualStore {
   const obj = getEnvProp(env, name);
   if (isKVNamespace(obj)) return new KVEventualStore(obj);
-  throw new Error(`No "${name}" binding as KV Namespace.`);
+  throw new Error(`"${name}" is not binding as KV Namespace.`);
 }
 /**
  * Get a strong consistency Key-Value Store instance from environment bindings
  *
  * Retrieves a Durable Objects binding and wraps it in a portable IKVRealtimeStore interface.
  * This store provides strong consistency suitable for critical data requiring immediate reads after writes.
- * Uses a Durable Object instance identified by the provided name.
  *
  * @param env - Cloudflare Workers environment containing bindings
- * @param name - Unique identifier for the Durable Object instance (NOT binding name)
+ * @param name - Name of the Durable Object binding defined in wrangler.jsonc
  * @returns Key-Value Store instance with strong consistency
- * @throws {Error} If the "DOKVS" binding doesn't exist or is not a Durable Objects namespace
+ * @throws {Error} If the specified binding name doesn't exist or is not a Durable Objects namespace
  *
  * @example
  * ```ts
- * const kvs = getKVSRealtime(env, "my-kvs");
+ * const kvs = getKVSRealtime(env, "MY_DURABLE_OBJ");
  * await kvs.put("lastAccess", Date.now().toString());
  * ```
  */
 function getKVSRealtime(env: Env, name: string): IKVRealtimeStore {
-  const obj = getEnvProp(env, DOKVS_BINDING);
-  if (isDurableObjectNamespace(obj)) return new KVRealtimeStore(obj, name);
-  throw new Error(`No "${DOKVS_BINDING}" binding as Durable Objects.`);
+  const obj = getEnvProp(env, name);
+  if (isDurableObjectNamespace(obj)) return new KVRealtimeStore(obj);
+  throw new Error(`"${name}" is not binding as Durable Objects.`);
 }
 /**
  * Get an eventual consistency Relational Database Store instance from environment bindings
@@ -83,7 +80,7 @@ function getKVSRealtime(env: Env, name: string): IKVRealtimeStore {
 function getRDBEventual(env: Env, name: string): IRDBEventualStore {
   const obj = getEnvProp(env, name);
   if (isD1Database(obj)) return new RDBEventualStore(obj);
-  throw new Error(`No "${name}" binding as D1 Database.`);
+  throw new Error(`"${name}" is not binding as D1 Database.`);
 }
 /**
  * Get a database connection string from environment bindings
@@ -105,7 +102,7 @@ function getRDBEventual(env: Env, name: string): IRDBEventualStore {
 function getRDBConnectionString(env: Env, name: string): string {
   const obj = getEnvProp(env, name);
   if (isHyperdrive(obj)) return obj.connectionString;
-  throw new Error(`No "${name}" binding as Hyperdrive.`);
+  throw new Error(`"${name}" is not binding as Hyperdrive.`);
 }
 /**
  * Get a Binary Object Store instance from environment bindings
@@ -127,7 +124,7 @@ function getRDBConnectionString(env: Env, name: string): string {
 function getBOS(env: Env, name: string): IBOStore {
   const obj = getEnvProp(env, name);
   if (isR2Bucket(obj)) return new BOStore(obj);
-  throw new Error(`No "${name}" binding as R2 Bucket.`);
+  throw new Error(`"${name}" is not binding as R2 Bucket.`);
 }
 
 function getEnvProp(env: Env, name: string): unknown {
@@ -198,9 +195,10 @@ class KVEventualStore implements IKVEventualStore {
 }
 
 class KVRealtimeStore implements IKVRealtimeStore {
+  static #DOKVS_NAME = "DOKVS";
   #DOKVS;
-  constructor(arg: DurableObjectNamespace<DOKVS>, name: string) {
-    this.#DOKVS = arg.get(arg.idFromName(name));
+  constructor(arg: DurableObjectNamespace<DOKVS>) {
+    this.#DOKVS = arg.get(arg.idFromName(KVRealtimeStore.#DOKVS_NAME));
   }
   get consistency(): ConsistencyType {
     return "strong";

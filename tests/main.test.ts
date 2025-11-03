@@ -9,6 +9,7 @@ import { DOKVS } from "../src/cfobj.ts";
 let mf: Miniflare;
 let env: Env;
 
+const DO_BINDNAME = "MY_DURABLE_OBJECT";
 const DO_CLASSNAME = "DOKVS";
 const KV_NAMESPACE = "MY_KV_NAMESPACE";
 const D1_DATABASE = "MY_D1_DATABASE";
@@ -30,7 +31,7 @@ async function setup() {
   mf = new Miniflare({
     modules: true,
     scriptPath: path.worker,
-    durableObjects: { [DO_CLASSNAME]: { className: DO_CLASSNAME, useSQLite: true } },
+    durableObjects: { [DO_BINDNAME]: { className: DO_CLASSNAME, useSQLite: true } },
     kvNamespaces: [KV_NAMESPACE],
     d1Databases: [D1_DATABASE],
     r2Buckets: [R2_BUCKET],
@@ -40,7 +41,7 @@ async function setup() {
 async function setEnv() {
   env = {
     // @ts-expect-error: `await getDurableObjectNamespace` should return `DurableObjectNamespace` explained on readme, but got `Request_2<any>`
-    DOKVS: await mf.getDurableObjectNamespace(DO_CLASSNAME) as DurableObjectNamespace<DOKVS>,
+    MY_DURABLE_OBJECT: await mf.getDurableObjectNamespace(DO_BINDNAME) as DurableObjectNamespace<DOKVS>,
     // @ts-expect-error: `await getKVNamespace` should return `KVNamespace` explained on readme, but got `Request_2<any>`
     MY_KV_NAMESPACE: await mf.getKVNamespace(KV_NAMESPACE) as KVNamespace,
     MY_D1_DATABASE: await mf.getD1Database(D1_DATABASE) as D1Database,
@@ -111,7 +112,7 @@ Deno.test({
   ...testopts,
   name: "Realtime KVS (Durable Objects)",
   fn: async (t) => {
-    const dokv = getKVSRealtime(env, DO_CLASSNAME);
+    const dokv = getKVSRealtime(env, DO_BINDNAME);
 
     await t.step("consistency", () => {
       assertEquals(dokv.consistency, "strong");
@@ -156,7 +157,7 @@ Deno.test({
   ...testopts,
   name: "Realtime KVS (Durable Objects)",
   fn: async (t) => {
-    const dokv = getKVSRealtime(env, DO_CLASSNAME);
+    const dokv = getKVSRealtime(env, DO_BINDNAME);
 
     await t.step("consistency", () => {
       assertEquals(dokv.consistency, "strong");
@@ -323,7 +324,7 @@ Deno.test({
   ...testopts,
   name: "DOKVS class",
   fn: async (t) => {
-    const stub = env.DOKVS.get(env.DOKVS.idFromName("test")) as DurableObjectStub<DOKVS>;
+    const stub = env.MY_DURABLE_OBJECT.get(env.MY_DURABLE_OBJECT.idFromName("test")) as DurableObjectStub<DOKVS>;
 
     await t.step("now", () => {
       assertGreater(DOKVS.now(), 1760000000, "should be unix timestamp"); // > 2025-10-09 08:53:20 UTC

@@ -11,7 +11,7 @@ interface SelectRow {
  * A strongly consistent key-value store implementation using Cloudflare Durable Objects.
  * Supports string and binary values with optional TTL (time-to-live) functionality.
  */
-export class DOKVS extends DurableObject<Env> {
+export abstract class DOKVS extends DurableObject<Env> {
   /**
    * Creates a new DOKVS instance.
    * Initializes the SQL storage and creates necessary tables if they don't exist.
