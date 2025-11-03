@@ -67,7 +67,7 @@ Deno.test({
   ...testopts,
   name: "Eventual KVS (Workers KV)",
   fn: async (t) => {
-    const kv = getKVSEventual(env, KV_NAMESPACE);
+    const kv = getKVSEventual(KV_NAMESPACE, env);
 
     await t.step("consistency", () => {
       assertEquals(kv.consistency, "eventual");
@@ -112,52 +112,7 @@ Deno.test({
   ...testopts,
   name: "Realtime KVS (Durable Objects)",
   fn: async (t) => {
-    const dokv = getKVSRealtime(env, DO_BINDNAME);
-
-    await t.step("consistency", () => {
-      assertEquals(dokv.consistency, "strong");
-    });
-    await t.step("put", async () => {
-      await dokv.put(key.k1, val.v1);
-      await dokv.put(key.k2, val.v2, { expiration: getNow() + 60 });
-      await dokv.put(key.k3, val.v3, { ttl: 60 });
-      await dokv.put(key.k4, (new TextEncoder()).encode(val.v4).buffer as ArrayBuffer);
-    });
-    await t.step("get", async () => {
-      assertEquals(await dokv.get(key.k1), val.v1, "put is not worked, or get is not worked: 1");
-      assertEquals(await dokv.get(key.k2), val.v2, "put is not worked, or get is not worked: 2");
-      assertEquals(await dokv.get(key.k3), val.v3, "put is not worked, or get is not worked: 3");
-      const buf = await dokv.get(key.k4, { type: "bytes" });
-      const str = new TextDecoder().decode(buf as ArrayBuffer);
-      assertEquals(str, val.v4, "put is not worked as bin, or get is not worked as bin: 4");
-    });
-    await t.step("list", async () => {
-      const list = await dokv.list({ prefix: "key" });
-      const now = getNow();
-      assertEquals(list.size, 3, `prefix "key" should have 3 entries`);
-      list.values().forEach((x) => {
-        if (x) assertGreater(x, now, "ttl should be grater than now");
-      });
-      const one = await dokv.list({ limit: 1 });
-      assertEquals(one.size, 1, "list size with limit should be same if limit less than 1000");
-    });
-    await t.step("delete", async () => {
-      await dokv.delete(key.k1);
-      await dokv.delete(key.k2);
-      await dokv.delete(key.k3);
-      await dokv.delete(key.k4);
-      const list = await dokv.list({ prefix: "key" });
-      assertEquals(list.size, 0, "list size should be 0");
-      assertEquals(await dokv.get(key.k4), undefined, "get result should be undefined");
-    });
-  },
-});
-
-Deno.test({
-  ...testopts,
-  name: "Realtime KVS (Durable Objects)",
-  fn: async (t) => {
-    const dokv = getKVSRealtime(env, DO_BINDNAME);
+    const dokv = getKVSRealtime(DO_BINDNAME, env);
 
     await t.step("consistency", () => {
       assertEquals(dokv.consistency, "strong");
@@ -206,7 +161,7 @@ Deno.test({
   ...testopts,
   name: "Eventual RDB (D1 SQL Database)",
   fn: async (t) => {
-    const d1 = getRDBEventual(env, D1_DATABASE);
+    const d1 = getRDBEventual(D1_DATABASE, env);
 
     await t.step("consistency", () => {
       assertEquals(d1.consistency, "eventual");
@@ -258,7 +213,7 @@ Deno.test({
 
 Deno.test("Realtime RDB (Hyperdrive)", async (t) => {
   await t.step("getRDBConnectionString", () => {
-    const conn = getRDBConnectionString(env, HYPERDRIVE);
+    const conn = getRDBConnectionString(HYPERDRIVE, env);
     assertEquals(conn, CONN_STR, "should return connection string of Hyperdrive");
   });
 });
@@ -267,7 +222,7 @@ Deno.test({
   ...testopts,
   name: "Binary Objects (R2 Bucket)",
   fn: async (t) => {
-    const r2 = getBOS(env, R2_BUCKET);
+    const r2 = getBOS(R2_BUCKET, env);
     const meta = { contentType: "application/octet-stream", originalName: "test_file.png" };
 
     if (!(await exists(path.from))) return console.error("not exists binary file for testing");

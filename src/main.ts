@@ -22,8 +22,8 @@ import { DOKVS } from "./cfobj.ts";
  * Retrieves a KV Namespace binding and wraps it in a portable IKVEventualStore interface.
  * This store provides eventual consistency suitable for caching and non-critical data.
  *
- * @param env - Cloudflare Workers environment containing bindings
  * @param name - Name of the KV Namespace binding defined in wrangler.jsonc
+ * @param env - Cloudflare Workers environment containing bindings
  * @returns Key-Value Store instance with eventual consistency
  * @throws {Error} If the specified binding name doesn't exist or is not a KV Namespace
  *
@@ -33,7 +33,7 @@ import { DOKVS } from "./cfobj.ts";
  * await kvs.put("key", "value", { ttl: 3600 });
  * ```
  */
-function getKVSEventual(env: Env, name: string): IKVEventualStore {
+function getKVSEventual(name: string, env: Env): IKVEventualStore {
   const obj = getEnvProp(env, name);
   if (isKVNamespace(obj)) return new KVEventualStore(obj);
   throw new Error(`"${name}" is not binding as KV Namespace.`);
@@ -44,8 +44,8 @@ function getKVSEventual(env: Env, name: string): IKVEventualStore {
  * Retrieves a Durable Objects binding and wraps it in a portable IKVRealtimeStore interface.
  * This store provides strong consistency suitable for critical data requiring immediate reads after writes.
  *
- * @param env - Cloudflare Workers environment containing bindings
  * @param name - Name of the Durable Object binding defined in wrangler.jsonc
+ * @param env - Cloudflare Workers environment containing bindings
  * @returns Key-Value Store instance with strong consistency
  * @throws {Error} If the specified binding name doesn't exist or is not a Durable Objects namespace
  *
@@ -55,7 +55,7 @@ function getKVSEventual(env: Env, name: string): IKVEventualStore {
  * await kvs.put("lastAccess", Date.now().toString());
  * ```
  */
-function getKVSRealtime(env: Env, name: string): IKVRealtimeStore {
+function getKVSRealtime(name: string, env: Env): IKVRealtimeStore {
   const obj = getEnvProp(env, name);
   if (isDurableObjectNamespace(obj)) return new KVRealtimeStore(obj);
   throw new Error(`"${name}" is not binding as Durable Objects.`);
@@ -66,8 +66,8 @@ function getKVSRealtime(env: Env, name: string): IKVRealtimeStore {
  * Retrieves a D1 Database binding and wraps it in a portable IRDBEventualStore interface.
  * This store provides SQL query execution with eventual consistency.
  *
- * @param env - Cloudflare Workers environment containing bindings
  * @param name - Name of the D1 Database binding defined in wrangler.jsonc
+ * @param env - Cloudflare Workers environment containing bindings
  * @returns Relational Database Store instance with eventual consistency
  * @throws {Error} If the specified binding name doesn't exist or is not a D1 Database
  *
@@ -77,7 +77,7 @@ function getKVSRealtime(env: Env, name: string): IKVRealtimeStore {
  * const users = await rdb.query("SELECT * FROM users WHERE id = ?", userId);
  * ```
  */
-function getRDBEventual(env: Env, name: string): IRDBEventualStore {
+function getRDBEventual(name: string, env: Env): IRDBEventualStore {
   const obj = getEnvProp(env, name);
   if (isD1Database(obj)) return new RDBEventualStore(obj);
   throw new Error(`"${name}" is not binding as D1 Database.`);
@@ -88,8 +88,8 @@ function getRDBEventual(env: Env, name: string): IRDBEventualStore {
  * Retrieves a Hyperdrive binding and returns its connection string for use with
  * external database clients or ORMs.
  *
- * @param env - Cloudflare Workers environment containing bindings
  * @param name - Name of the Hyperdrive binding defined in wrangler.jsonc
+ * @param env - Cloudflare Workers environment containing bindings
  * @returns Connection string of Hyperdrive  (e.g., "postgresql://user:pass@host:port/db")
  * @throws {Error} If the specified binding name doesn't exist or is not a Hyperdrive instance
  *
@@ -99,7 +99,7 @@ function getRDBEventual(env: Env, name: string): IRDBEventualStore {
  * const client = new PostgresClient(connStr);
  * ```
  */
-function getRDBConnectionString(env: Env, name: string): string {
+function getRDBConnectionString(name: string, env: Env): string {
   const obj = getEnvProp(env, name);
   if (isHyperdrive(obj)) return obj.connectionString;
   throw new Error(`"${name}" is not binding as Hyperdrive.`);
@@ -110,8 +110,8 @@ function getRDBConnectionString(env: Env, name: string): string {
  * Retrieves an R2 Bucket binding and wraps it in a portable IBOStore interface,
  * allowing easy migration between different cloud storage providers.
  *
- * @param env - Cloudflare Workers environment containing bindings
  * @param name - Name of the R2 Bucket binding defined in wrangler.jsonc
+ * @param env - Cloudflare Workers environment containing bindings
  * @returns Binary Object Store instance with strong consistency
  * @throws {Error} If the specified binding name doesn't exist or is not an R2 Bucket
  *
@@ -121,7 +121,7 @@ function getRDBConnectionString(env: Env, name: string): string {
  * await storage.put("file.txt", buffer);
  * ```
  */
-function getBOS(env: Env, name: string): IBOStore {
+function getBOS(name: string, env: Env): IBOStore {
   const obj = getEnvProp(env, name);
   if (isR2Bucket(obj)) return new BOStore(obj);
   throw new Error(`"${name}" is not binding as R2 Bucket.`);

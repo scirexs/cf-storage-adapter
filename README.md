@@ -61,7 +61,7 @@ Two consistency models are available:
 ```ts
 import { getKVSEventual } from "@scirexs/cf-storage-adapter";
 
-const kvs = getKVSEventual(env, "MY_KV_NAMESPACE");
+const kvs = getKVSEventual("MY_KV_NAMESPACE", env);
 
 // Store a value with TTL
 await kvs?.put("user:123", "John Doe", { ttl: 3600 });
@@ -80,7 +80,7 @@ await kvs?.delete("user:123");
 ```ts
 import { getKVSRealtime } from "@scirexs/cf-storage-adapter";
 
-const kvs = getKVSRealtime(env, "my-kvs-instance");
+const kvs = getKVSRealtime("MY_DURABLE_OBJECT", env);
 
 // Store a value with absolute expiration
 await kvs.put("session:abc", "data", { expiration: 1735689600 });
@@ -100,7 +100,7 @@ const data = await kvs.get("binary:key", { type: "bytes" });
 ```ts
 import { getRDBEventual } from "@scirexs/cf-storage-adapter";
 
-const rdb = getRDBEventual(env, "MY_D1_DATABASE");
+const rdb = getRDBEventual("MY_D1_DATABASE", env);
 
 // Execute a query
 const users = await rdb.query("SELECT * FROM users WHERE age > ?", 18);
@@ -123,7 +123,7 @@ await rdb.batch([
 ```ts
 import { getRDBConnectionString } from "@scirexs/cf-storage-adapter";
 
-const connectionString = getRDBConnectionString(env, "MY_HYPERDRIVE");
+const connectionString = getRDBConnectionString("MY_HYPERDRIVE", env);
 // Use with external database clients or ORMs
 ```
 
@@ -131,7 +131,7 @@ const connectionString = getRDBConnectionString(env, "MY_HYPERDRIVE");
 ```ts
 import { getBOS } from "@scirexs/cf-storage-adapter";
 
-const storage = getBOS(env, "MY_R2_BUCKET");
+const storage = getBOS("MY_R2_BUCKET", env);
 
 // Store a file
 const fileData = new ArrayBuffer(1024);
